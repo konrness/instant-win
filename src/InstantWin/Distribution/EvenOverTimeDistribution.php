@@ -58,7 +58,7 @@ class EvenOverTimeDistribution extends AbstractDistribution
 
 //        echo "ERP: $estimatedRemainingPlays, ";
 
-        return ($desiredWinCount - $this->getCurrentWinCount()) / $estimatedRemainingPlays * 4;
+        return ($desiredWinCount - $this->getCurrentWinCount()) / $estimatedRemainingPlays * 5;
 
     }
 

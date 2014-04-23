@@ -20,6 +20,7 @@ class PlayerTest extends \PHPUnit_Framework_TestCase {
 
         $player = new Player();
         $player->setDistribution($dist);
+        $player->setMaxWins(1000);
 
         $wins  = 0;
         for($plays = 0; $plays < 1000; $plays++) {
@@ -38,6 +39,7 @@ class PlayerTest extends \PHPUnit_Framework_TestCase {
 
         $player = new Player();
         $player->setDistribution($dist);
+        $player->setMaxWins(1000);
 
         $wins  = 0;
         for($plays = 0; $plays < 1000; $plays++) {

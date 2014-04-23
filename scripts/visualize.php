@@ -11,7 +11,7 @@ $screenCols = exec('tput cols');
 
 for ($tries = 0; $tries < 20; $tries++) {
 
-    $durationInSeconds = 3000;
+    $durationInSeconds = 20000;
 
     $eachDot = ceil($durationInSeconds / ($screenCols-3));
 
