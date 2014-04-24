@@ -5,7 +5,6 @@
     <property name="dir.vendor" value="${project.basedir}/vendor"/>
     <property name="dir.reports" value="${project.basedir}/test-reports"/>
     <property name="dir.reports.pdepend" value="${dir.reports}/pdepend"/>
-    <property name="dir.reports.coverage" value="${dir.reports}/coverage"/>
     <property name="dir.docs" value="${dir.reports}/docs"/>
     <property name="dir.docs.phpdoc" value="${dir.docs}/phpdoc"/>
     <property name="dir.docs.docblox" value="${dir.docs}/docblox"/>
@@ -43,22 +42,17 @@
     <!-- Project build clean -->
     <target name="build:clean" description="Clean up generated files">
         <echo msg="Cleaning build directories ..."/>
-        <delete dir="${dir.build}" verbose="true"/>
         <delete dir="${dir.vendor}" verbose="false"/>
-        <exec checkreturn="true" command="rm -rf ${dir.cache}" />
-        <delete dir="${dir.logs}" verbose="true"/>
         <delete file="${project.basedir}/composer.lock" />
     </target>
 
     <!-- Project build prepare -->
     <target name="build:prepare">
         <echo msg="Creating build directories ..."/>
-        <mkdir dir="${dir.build}"/>
         <mkdir dir="${dir.docs}"/>
         <mkdir dir="${dir.docs.phpdoc}"/>
         <mkdir dir="${dir.docs.docblox}"/>
         <mkdir dir="${dir.reports}"/>
-        <mkdir dir="${dir.reports.coverage}"/>
         <mkdir dir="${dir.reports.pdepend}"/>
     </target>
 
@@ -122,21 +116,6 @@
             <logger type="overview-pyramid"
                     outfile="${dir.reports.pdepend}/overview-pyramid.svg"/>
         </phpdepend>
-    </target>
-
-
-    <target name="pdepend">
-        <exec dir="${basedir}" executable="pdepend" failonerror="false">
-            <arg line="--jdepend-xml=${basedir}/build/logs/jdepend.xml
-                       --jdepend-chart=${basedir}/build/dependencies/jdepend.svg
-                       --overview-pyramid=${basedir}/build/dependencies/pyramid.svg
-                       --optimization=best
-                       --exclude=build,tests
-                       ." />
-        </exec>
-        <exec dir="${basedir}/build/dependencies" executable="cp" failonerror="false">
-            <arg line="${basedir}/path/to/dependencies.html index.html" />
-        </exec>
     </target>
 
 </project>
