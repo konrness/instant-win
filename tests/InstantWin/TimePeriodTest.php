@@ -38,6 +38,33 @@ class TimePeriodTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(1234, $timePeriod->getCurrentTimestamp());
     }
 
+    /**
+     * @expectedException \Exception
+     */
+    public function testEmptyStartGetFails()
+    {
+        $timePeriod = new TimePeriod();
+
+        $timePeriod->getStartTimestamp();
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testEmptyEndGetFails()
+    {
+        $timePeriod = new TimePeriod();
+
+        $timePeriod->getEndTimestamp();
+    }
+
+    public function testEmptyCurrentGetProvidesCurrentTime()
+    {
+        $timePeriod = new TimePeriod();
+
+        $this->assertEquals(time(), $timePeriod->getCurrentTimestamp());
+    }
+
     public function testCompletionCorrect()
     {
         $timePeriod = new TimePeriod();
