@@ -1,82 +1,127 @@
-<project name="Instant Win" default="build">
-    <target name="clean">
-        <delete dir="${basedir}/test-reports" />
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Instant Win" basedir="." default="main">
+    
+    <property name="dir.src" value="${project.basedir}/src"/>
+    <property name="dir.vendor" value="${project.basedir}/vendor"/>
+    <property name="dir.reports" value="${project.basedir}/test-reports"/>
+    <property name="dir.reports.pdepend" value="${dir.reports}/pdepend"/>
+    <property name="dir.reports.coverage" value="${dir.reports}/coverage"/>
+    <property name="dir.docs" value="${dir.reports}/docs"/>
+    <property name="dir.docs.phpdoc" value="${dir.docs}/phpdoc"/>
+    <property name="dir.docs.docblox" value="${dir.docs}/docblox"/>
+
+    <!-- Filesets -->
+    <fileset id="sourcecode" dir="${dir.src}">
+        <include name="**/*.php"/>
+    </fileset>
+
+    <!-- Default target -->
+    <target name="main">
+        <echo msg="See:"/>
+        <echo msg=" * phing -l"/>
     </target>
- 
-    <target name="prepare">
-        <mkdir dir="${basedir}/test-reports/logs" />
-        <mkdir dir="${basedir}/test-reports/codebrowser" />
-        <mkdir dir="${basedir}/test-reports/coverage" />
-        <mkdir dir="${basedir}/test-reports/cpd" />
-        <mkdir dir="${basedir}/test-reports/dependencies" />
-    </target>
- 
-    <target name="phpcs">
-        <exec dir="${basedir}/vendor/bin" executable="phpcs" failonerror="false" output="/dev/null">
-            <arg line="--extensions=php --ignore=test-reports/*,tests/* --standard=PSR2 --tab-width=4 --report=checkstyle --report-file=${basedir}/test-reports/logs/checkstyle.xml ." />
+
+	<target name="check"
+		description="All quality checks"
+		depends="build:prepare,build:check"/>
+
+    <!-- SUBTARGETS -->
+
+    <!-- phploc -->
+    <target name="doc:phploc">
+        <exec executable="phploc">
+            <arg value="--log-csv" />
+            <arg value="${dir.reports}/phploc.csv" />
+            <arg path="${project.basedir}/src" />
         </exec>
     </target>
- 
-    <target name="phpmd">
-        <exec dir="${basedir}" executable="phpmd" failonerror="false">
-            <arg line=". xml codesize --reportfile ${basedir}/test-reports/logs/pmd.xml" />
-        </exec>
+
+    <!-- Check target -->
+    <target name="build:check"
+            depends="check:cs, check:md, check:depend, check:cpd"/>
+
+    <!-- Project build clean -->
+    <target name="build:clean" description="Clean up generated files">
+        <echo msg="Cleaning build directories ..."/>
+        <delete dir="${dir.build}" verbose="true"/>
+        <delete dir="${dir.vendor}" verbose="false"/>
+        <exec checkreturn="true" command="rm -rf ${dir.cache}" />
+        <delete dir="${dir.logs}" verbose="true"/>
+        <delete file="${project.basedir}/composer.lock" />
     </target>
- 
-    <target name="phpcpd">
-        <exec dir="${basedir}" executable="phpcpd" failonerror="false">
-            <arg line="--log-pmd=${basedir}/test-reports/logs/pmd-cpd.xml
-                       --exclude=build
-                       --exclude=tests
-                       ." />
-        </exec>
-        <exec dir="${basedir}/build/logs" executable="xsltproc" failonerror="false" output="${basedir}/build/cpd/index.html">
-            <arg line="/path/to/cpd.xsl ${basedir}/test-reports/logs/pmd-cpd.xml" />
-        </exec>
+
+    <!-- Project build prepare -->
+    <target name="build:prepare">
+        <echo msg="Creating build directories ..."/>
+        <mkdir dir="${dir.build}"/>
+        <mkdir dir="${dir.docs}"/>
+        <mkdir dir="${dir.docs.phpdoc}"/>
+        <mkdir dir="${dir.docs.docblox}"/>
+        <mkdir dir="${dir.reports}"/>
+        <mkdir dir="${dir.reports.coverage}"/>
+        <mkdir dir="${dir.reports.pdepend}"/>
     </target>
- 
-    <target name="pdepend">
-        <exec dir="${basedir}" executable="pdepend" failonerror="false">
-            <arg line="--jdepend-xml=${basedir}/test-reports/logs/jdepend.xml
-                       --jdepend-chart=${basedir}/test-reports/dependencies/jdepend.svg
-                       --overview-pyramid=${basedir}/test-reports/dependencies/pyramid.svg
-                       --optimization=best
-                       --exclude=test-reports,tests
-                       ." />
-        </exec>
-        <exec dir="${basedir}/build/dependencies" executable="cp" failonerror="false">
-            <arg line="${basedir}/path/to/dependencies.html index.html" />
-        </exec>
+
+    <!-- PHPDOC API documentation target -->
+    <target name="doc:phpdoc">
+        <echo msg="Generating API documentation with PHPDoc..."/>
+        <exec passthru="true" checkreturn="true" command='phpdoc -d ./src --defaultpackagename="${phing.project.name}" --title="${phing.project.name} :: API Documentation" --target="${dir.docs.phpdoc}" --sourcecode -c phpdoc.xml' />
     </target>
- 
-    <target name="phpcb">
-        <exec dir="${basedir}" executable="phpcb" failonerror="false">
-            <arg line="--log ${basedir}/test-reports/logs --source ${basedir} --output ${basedir}/test-reports/codebrowser" />
-        </exec>
+
+    <!-- DocBlox API documentation target -->
+    <target name="doc:docblox">
+        <echo msg="Generating API Documentation with DocBlox ..."/>
+        <docblox title="${phing.project.name} :: API Documentation"
+                 destdir="${dir.docs.docblox}"
+                 quiet="false">
+            <fileset refid="sourcecode"/>
+        </docblox>
     </target>
- 
-    <target name="phpunit">
-        <exec dir="${basedir}/tests" executable="phpunit" failonerror="true">
-            <arg line="--log-junit ${basedir}/test-reports/logs/phpunit.xml
-                       --coverage-clover ${basedir}/test-reports/logs/clover.xml
-                       --coverage-html ${basedir}/test-reports/coverage" />
-        </exec>
+
+    <!-- PSR2 code sniffer -->
+    <target name="check:cs">
+        <echo msg="Checking coding standard ..."/>
+        <phpcodesniffer standard="PSR2"
+                        showSniffs="true"
+                        showWarnings="true">
+            <fileset refid="sourcecode"/>
+            <formatter type="checkstyle"
+                       outfile="${dir.reports}/checkstyle.xml"/>
+        </phpcodesniffer>
     </target>
- <!--
-    <target name="documentation" depends="prepare">
-        <exec dir="${basedir}" executable="docblox" failonerror="false">
-            <arg line="run -t ${basedir}/test-reports/docblox" />
-        </exec>
+
+    <!-- copy/paste detector -->
+    <target name="check:cpd">
+		<!-- Waiting on  http://www.phing.info/trac/ticket/1035 -->
+        <!--
+		<echo msg="Checking similar code blocks ..."/>
+        <phpcpd>
+            <fileset refid="sourcecode"/>
+            <formatter type="pmd" outfile="${dir.reports}/pmd-cpd.xml"/>
+        </phpcpd>
+		-->
     </target>
- -->
-    <target name="parallel">
-        <parallel>
-            <antcall target="phpcs" />
-            <antcall target="phpmd" />
-            <antcall target="phpcpd" />
-            <antcall target="pdepend" />
-        </parallel>
+
+    <!-- Mess detector -->
+    <target name="check:md">
+        <echo msg="Generating code metrics ..."/>
+        <phpmd rulesets="codesize,unusedcode">
+            <fileset refid="sourcecode"/>
+            <formatter type="xml" outfile="${dir.reports}/pmd.xml"/>
+        </phpmd>
     </target>
- 
-    <target name="build" depends="clean,prepare,parallel,phpunit,phpcb,documentation" />
+
+    <!-- Code dependency -->
+    <target name="check:depend">
+        <echo msg="Checking coupling and dependency ..."/>
+        <phpdepend file="${dir.src}">
+            <logger type="jdepend-xml"
+                    outfile="${dir.reports.pdepend}/jdepend.xml"/>
+            <logger type="jdepend-chart"
+                    outfile="${dir.reports.pdepend}/dependencies.svg"/>
+            <logger type="overview-pyramid"
+                    outfile="${dir.reports.pdepend}/overview-pyramid.svg"/>
+        </phpdepend>
+    </target>
+
 </project>
