@@ -28,5 +28,8 @@
         "sebastian/phpcpd": "*",
         "pdepend/pdepend": "*",
         "pear/archive_tar": "*"
-    }
+    },
+    "include-path": [
+        "vendor/pear/archive_tar"
+    ]
 }

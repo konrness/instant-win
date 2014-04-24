@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ed2aa7e613bfdb92f78e76553f9d29cc",
+    "hash": "bb66eeb491b5770b3d184e7347544511",
     "packages": [
         {
             "name": "jlogsdon/cli",
