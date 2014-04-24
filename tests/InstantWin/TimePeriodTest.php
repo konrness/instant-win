@@ -62,6 +62,8 @@ class TimePeriodTest extends \PHPUnit_Framework_TestCase {
     {
         $timePeriod = new TimePeriod();
 
+        // intentional fail to test Bamboo
+        $this->assertEquals(5, $timePeriod->getCurrentTimestamp());
         $this->assertEquals(time(), $timePeriod->getCurrentTimestamp());
     }
 
