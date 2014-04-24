@@ -26,7 +26,7 @@
 		depends="build:prepare,build:check"/>
 
     <target name="build"
-            description="All quality checks"
+            description="Creates release build"
             depends="build:prepare,build:package"/>
 
     <!-- SUBTARGETS -->
@@ -42,13 +42,6 @@
             <arg value="${dir.reports}/phploc.csv" />
             <arg path="${dir.src}" />
         </exec>
-    </target>
-
-    <!-- Project build clean -->
-    <target name="build:clean" description="Clean up generated files">
-        <echo msg="Cleaning build directories ..."/>
-        <delete dir="${dir.vendor}" verbose="false"/>
-        <delete file="${project.basedir}/composer.lock" />
     </target>
 
     <!-- Project build prepare -->
