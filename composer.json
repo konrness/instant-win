@@ -20,6 +20,11 @@
     },
     "require-dev": {
         "phpunit/phpunit": "4.0.*",
-        "jlogsdon/cli": "*"
+        "jlogsdon/cli": "*",
+	"phing/phing": "2.7.*",
+	"phpmd/phpmd": "1.4.*",
+	"squizlabs/php_codesniffer": "1.*",
+	"sebastian/phpcpd": "*",
+	"pdepend/pdepend": "*"
     }
 }

@@ -1,0 +1,82 @@
+<project name="Instant Win" default="build">
+    <target name="clean">
+        <delete dir="${basedir}/test-reports" />
+    </target>
+ 
+    <target name="prepare">
+        <mkdir dir="${basedir}/test-reports/logs" />
+        <mkdir dir="${basedir}/test-reports/codebrowser" />
+        <mkdir dir="${basedir}/test-reports/coverage" />
+        <mkdir dir="${basedir}/test-reports/cpd" />
+        <mkdir dir="${basedir}/test-reports/dependencies" />
+    </target>
+ 
+    <target name="phpcs">
+        <exec dir="${basedir}/vendor/bin" executable="phpcs" failonerror="false" output="/dev/null">
+            <arg line="--extensions=php --ignore=test-reports/*,tests/* --standard=PSR2 --tab-width=4 --report=checkstyle --report-file=${basedir}/test-reports/logs/checkstyle.xml ." />
+        </exec>
+    </target>
+ 
+    <target name="phpmd">
+        <exec dir="${basedir}" executable="phpmd" failonerror="false">
+            <arg line=". xml codesize --reportfile ${basedir}/test-reports/logs/pmd.xml" />
+        </exec>
+    </target>
+ 
+    <target name="phpcpd">
+        <exec dir="${basedir}" executable="phpcpd" failonerror="false">
+            <arg line="--log-pmd=${basedir}/test-reports/logs/pmd-cpd.xml
+                       --exclude=build
+                       --exclude=tests
+                       ." />
+        </exec>
+        <exec dir="${basedir}/build/logs" executable="xsltproc" failonerror="false" output="${basedir}/build/cpd/index.html">
+            <arg line="/path/to/cpd.xsl ${basedir}/test-reports/logs/pmd-cpd.xml" />
+        </exec>
+    </target>
+ 
+    <target name="pdepend">
+        <exec dir="${basedir}" executable="pdepend" failonerror="false">
+            <arg line="--jdepend-xml=${basedir}/test-reports/logs/jdepend.xml
+                       --jdepend-chart=${basedir}/test-reports/dependencies/jdepend.svg
+                       --overview-pyramid=${basedir}/test-reports/dependencies/pyramid.svg
+                       --optimization=best
+                       --exclude=test-reports,tests
+                       ." />
+        </exec>
+        <exec dir="${basedir}/build/dependencies" executable="cp" failonerror="false">
+            <arg line="${basedir}/path/to/dependencies.html index.html" />
+        </exec>
+    </target>
+ 
+    <target name="phpcb">
+        <exec dir="${basedir}" executable="phpcb" failonerror="false">
+            <arg line="--log ${basedir}/test-reports/logs --source ${basedir} --output ${basedir}/test-reports/codebrowser" />
+        </exec>
+    </target>
+ 
+    <target name="phpunit">
+        <exec dir="${basedir}/tests" executable="phpunit" failonerror="true">
+            <arg line="--log-junit ${basedir}/test-reports/logs/phpunit.xml
+                       --coverage-clover ${basedir}/test-reports/logs/clover.xml
+                       --coverage-html ${basedir}/test-reports/coverage" />
+        </exec>
+    </target>
+ <!--
+    <target name="documentation" depends="prepare">
+        <exec dir="${basedir}" executable="docblox" failonerror="false">
+            <arg line="run -t ${basedir}/test-reports/docblox" />
+        </exec>
+    </target>
+ -->
+    <target name="parallel">
+        <parallel>
+            <antcall target="phpcs" />
+            <antcall target="phpmd" />
+            <antcall target="phpcpd" />
+            <antcall target="pdepend" />
+        </parallel>
+    </target>
+ 
+    <target name="build" depends="clean,prepare,parallel,phpunit,phpcb,documentation" />
+</project>
