@@ -2,6 +2,7 @@
 <project name="Instant Win" basedir="." default="main">
     
     <property name="dir.src" value="${project.basedir}/src"/>
+    <property name="dir.build" value="${project.basedir}/build"/>
     <property name="dir.vendor" value="${project.basedir}/vendor"/>
     <property name="dir.reports" value="${project.basedir}/test-reports"/>
     <property name="dir.reports.pdepend" value="${dir.reports}/pdepend"/>
@@ -23,6 +24,10 @@
 	<target name="check"
 		description="All quality checks"
 		depends="build:prepare,build:check"/>
+
+    <target name="build"
+            description="All quality checks"
+            depends="build:prepare,build:package"/>
 
     <!-- SUBTARGETS -->
 
@@ -50,6 +55,7 @@
     <target name="build:prepare">
         <echo msg="Creating build directories ..."/>
         <mkdir dir="${dir.docs}"/>
+        <mkdir dir="${dir.build}"/>
         <mkdir dir="${dir.docs.phpdoc}"/>
         <mkdir dir="${dir.docs.docblox}"/>
         <mkdir dir="${dir.reports}"/>
@@ -116,6 +122,18 @@
             <logger type="overview-pyramid"
                     outfile="${dir.reports.pdepend}/overview-pyramid.svg"/>
         </phpdepend>
+    </target>
+
+    <!-- Package Build -->
+    <target name="build:package">
+        <!-- Build Tar file -->
+        <tar basedir="${project.basedir}" destfile="${dir.build}/release.tar.gz" compression="gzip" includeemptydirs="true">
+            <fileset dir=".">
+                <include name="scripts/**" />
+                <include name="src/**" />
+                <include name="vendor/**" />
+            </fileset>
+        </tar>
     </target>
 
 </project>
