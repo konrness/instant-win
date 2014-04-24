@@ -27,18 +27,18 @@
 
     <!-- SUBTARGETS -->
 
+    <!-- Check target -->
+    <target name="build:check"
+            depends="check:cs, check:md, check:depend, check:cpd"/>
+
     <!-- phploc -->
     <target name="doc:phploc">
         <exec executable="phploc">
             <arg value="--log-csv" />
             <arg value="${dir.reports}/phploc.csv" />
-            <arg path="${project.basedir}/src" />
+            <arg path="${dir.src}" />
         </exec>
     </target>
-
-    <!-- Check target -->
-    <target name="build:check"
-            depends="check:cs, check:md, check:depend, check:cpd"/>
 
     <!-- Project build clean -->
     <target name="build:clean" description="Clean up generated files">
@@ -122,6 +122,21 @@
             <logger type="overview-pyramid"
                     outfile="${dir.reports.pdepend}/overview-pyramid.svg"/>
         </phpdepend>
+    </target>
+
+
+    <target name="pdepend">
+        <exec dir="${basedir}" executable="pdepend" failonerror="false">
+            <arg line="--jdepend-xml=${basedir}/build/logs/jdepend.xml
+                       --jdepend-chart=${basedir}/build/dependencies/jdepend.svg
+                       --overview-pyramid=${basedir}/build/dependencies/pyramid.svg
+                       --optimization=best
+                       --exclude=build,tests
+                       ." />
+        </exec>
+        <exec dir="${basedir}/build/dependencies" executable="cp" failonerror="false">
+            <arg line="${basedir}/path/to/dependencies.html index.html" />
+        </exec>
     </target>
 
 </project>
