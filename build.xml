@@ -120,6 +120,7 @@
     <!-- Package Build -->
     <target name="build:package">
         <!-- Build Tar file -->
+        <!-- @todo Rewrite to use exec instead of having dependency on Archive_Tar (which doesn't play nice with Composer) -->
         <tar basedir="${project.basedir}" destfile="${dir.build}/release.tar.gz" compression="gzip" includeemptydirs="true">
             <fileset dir=".">
                 <include name="scripts/**" />
