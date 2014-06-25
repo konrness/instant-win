@@ -44,19 +44,13 @@ class EvenOverTimeDistribution extends AbstractDistribution
     public function getOdds()
     {
         // determine percentage of wins awarded
-        $winsPercentage = $this->getCurrentWinCount() / $this->getMaxWinCount();
         $timePercentage = $this->getTimePeriod()->getCompletion();
 
         $desiredWinCount = $timePercentage * $this->getMaxWinCount();
-//
-//        echo "DW: $desiredWinCount, ";
-//        echo "AW: " . $this->getCurrentWinCount() . ", ";
 
         // this assumes a linear distribution of plays throughout the day
         $estimatedRemainingPlays = ($this->getPlayCount() / $timePercentage) - $this->getPlayCount();
         $estimatedRemainingPlays = max(1, $estimatedRemainingPlays);
-
-//        echo "ERP: $estimatedRemainingPlays, ";
 
         return ($desiredWinCount - $this->getCurrentWinCount()) / $estimatedRemainingPlays * 5;
 
@@ -137,7 +131,7 @@ class EvenOverTimeDistribution extends AbstractDistribution
     public function getPlayCount()
     {
         if (null === $this->playCount) {
-            throw new Exception("PlayCount not set");
+            throw new \Exception("PlayCount not set");
         }
         return $this->playCount;
     }
