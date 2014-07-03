@@ -104,6 +104,10 @@
 
     <!-- Code dependency -->
     <target name="check:depend">
+        <!-- @todo Not working with PDepend 2.0. Getting error: PhpDependTask depends on PHP_Depend being installed and on include_path -->
+        <!-- Seems to be because PhpDependTask.php expects to include vendor/pdepend/pdepend/src/main/php/PHP/Depend/TextUI/Runner.php
+        but the path is actually vendor/pdepend/pdepend/src/main/php/PDepend/TextUI/Runner.php -->
+
         <echo msg="Checking coupling and dependency ..."/>
         <phpdepend>
             <fileset refid="sourcecode"/>
