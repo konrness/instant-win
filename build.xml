@@ -8,11 +8,18 @@
     <property name="dir.reports.pdepend" value="${dir.reports}/pdepend"/>
     <property name="dir.docs" value="${dir.reports}/docs"/>
     <property name="dir.docs.phpdoc" value="${dir.docs}/phpdoc"/>
-    <property name="dir.docs.docblox" value="${dir.docs}/docblox"/>
 
     <!-- Filesets -->
     <fileset id="sourcecode" dir="${dir.src}">
         <include name="**/*.php"/>
+    </fileset>
+
+    <fileset id="release" dir="${project.basedir}">
+        <include name="scripts/**" />
+        <include name="src/**" />
+        <include name="vendor/**" />
+        <include name="README.md" />
+        <include name="LICENSE" />
     </fileset>
 
     <!-- Default target -->
@@ -25,6 +32,10 @@
 		description="All quality checks"
 		depends="build:prepare,build:check"/>
 
+    <target name="documentation"
+            description="Generate all documentation"
+            depends="build:prepare,doc:phpdoc,doc:phploc"/>
+
     <target name="build"
             description="Creates release build"
             depends="build:prepare,build:package"/>
@@ -35,64 +46,51 @@
     <target name="build:check"
             depends="check:cs, check:md, check:depend, check:cpd"/>
 
-    <!-- phploc -->
-    <target name="doc:phploc">
-        <exec executable="phploc">
-            <arg value="--log-csv" />
-            <arg value="${dir.reports}/phploc.csv" />
-            <arg path="${dir.src}" />
-        </exec>
-    </target>
-
     <!-- Project build prepare -->
     <target name="build:prepare">
         <echo msg="Creating build directories ..."/>
         <mkdir dir="${dir.docs}"/>
         <mkdir dir="${dir.build}"/>
         <mkdir dir="${dir.docs.phpdoc}"/>
-        <mkdir dir="${dir.docs.docblox}"/>
         <mkdir dir="${dir.reports}"/>
         <mkdir dir="${dir.reports.pdepend}"/>
     </target>
 
-    <!-- PHPDOC API documentation target -->
-    <target name="doc:phpdoc">
-        <echo msg="Generating API documentation with PHPDoc..."/>
-        <exec passthru="true" checkreturn="true" command='phpdoc -d ./src --defaultpackagename="${phing.project.name}" --title="${phing.project.name} :: API Documentation" --target="${dir.docs.phpdoc}" --sourcecode -c phpdoc.xml' />
+    <!-- phploc -->
+    <target name="doc:phploc">
+        <phploc reportType="txt" reportDirectory="${dir.reports}">
+            <fileset refid="sourcecode"/>
+        </phploc>
     </target>
 
-    <!-- DocBlox API documentation target -->
-    <target name="doc:docblox">
-        <echo msg="Generating API Documentation with DocBlox ..."/>
-        <docblox title="${phing.project.name} :: API Documentation"
-                 destdir="${dir.docs.docblox}"
-                 quiet="false">
+    <!-- PHPDOC API documentation target -->
+    <target name="doc:phpdoc" depends="build:prepare">
+        <phpdoc2 title="${phing.project.name} :: API Documentation" destdir="${dir.docs.phpdoc}" template="responsive-twig">
             <fileset refid="sourcecode"/>
-        </docblox>
+        </phpdoc2>
     </target>
 
     <!-- PSR2 code sniffer -->
-    <target name="check:cs">
+    <target name="check:cs" depends="build:prepare">
         <echo msg="Checking coding standard ..."/>
-        <phpcodesniffer standard="PSR2"
-                        showSniffs="true"
-                        showWarnings="true">
+        <phpcodesniffer standard="PSR2" showWarnings="true">
             <fileset refid="sourcecode"/>
-            <formatter type="checkstyle"
-                       outfile="${dir.reports}/checkstyle.xml"/>
+            <formatter type="checkstyle" outfile="${dir.reports}/checkstyle.xml"/>
+            <formatter type="full" outfile="${dir.reports}/checkstyle.txt"/>
         </phpcodesniffer>
     </target>
 
     <!-- copy/paste detector -->
-    <target name="check:cpd">
-		<!-- Waiting on  http://www.phing.info/trac/ticket/1035 -->
-        <!--
-		<echo msg="Checking similar code blocks ..."/>
-        <phpcpd>
+    <target name="check:cpd" depends="build:prepare">
+        <echo msg="Checking similar code blocks ..."/>
+
+        <!-- @todo Put minTokens back to 70 (default) -->
+        <!-- @see http://www.phing.info/docs/guide/stable/apcs49.html -->
+        <phpcpd minTokens="20" minLines="5">
             <fileset refid="sourcecode"/>
             <formatter type="pmd" outfile="${dir.reports}/pmd-cpd.xml"/>
+            <formatter type="default" outfile="${dir.reports}/cpd.txt"/>
         </phpcpd>
-		-->
     </target>
 
     <!-- Mess detector -->
@@ -107,13 +105,13 @@
     <!-- Code dependency -->
     <target name="check:depend">
         <echo msg="Checking coupling and dependency ..."/>
-        <phpdepend file="${dir.src}">
-            <logger type="jdepend-xml"
-                    outfile="${dir.reports.pdepend}/jdepend.xml"/>
-            <logger type="jdepend-chart"
-                    outfile="${dir.reports.pdepend}/dependencies.svg"/>
-            <logger type="overview-pyramid"
-                    outfile="${dir.reports.pdepend}/overview-pyramid.svg"/>
+        <phpdepend>
+            <fileset refid="sourcecode"/>
+            <logger type="jdepend-xml" outfile="${dir.reports.pdepend}/jdepend.xml"/>
+            <logger type="jdepend-chart" outfile="${dir.reports.pdepend}/dependencies.svg"/>
+            <logger type="overview-pyramid" outfile="${dir.reports.pdepend}/overview-pyramid.svg"/>
+            <logger type="summary-xml" outfile="${dir.reports.pdepend}/summary.xml"/>
+            <logger type="phpunit-xml" outfile="${dir.reports.pdepend}/phpunit.xml"/>
         </phpdepend>
     </target>
 
@@ -122,11 +120,7 @@
         <!-- Build Tar file -->
         <!-- @todo Rewrite to use exec instead of having dependency on Archive_Tar (which doesn't play nice with Composer) -->
         <tar basedir="${project.basedir}" destfile="${dir.build}/release.tar.gz" compression="gzip" includeemptydirs="true">
-            <fileset dir=".">
-                <include name="scripts/**" />
-                <include name="src/**" />
-                <include name="vendor/**" />
-            </fileset>
+            <fileset refid="release"/>
         </tar>
     </target>
 
