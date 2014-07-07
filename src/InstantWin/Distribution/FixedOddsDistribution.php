@@ -15,7 +15,7 @@ class FixedOddsDistribution extends AbstractDistribution
     /**
      * @var float
      */
-    protected $odds;
+    protected $_odds;
 
     /**
      * Get the odds for a single play at this moment in time
@@ -25,11 +25,11 @@ class FixedOddsDistribution extends AbstractDistribution
      */
     public function getOdds()
     {
-        if (null === $this->odds) {
+        if (null === $this->_odds) {
             throw new Exception("Odds not set");
         }
 
-        return $this->odds;
+        return $this->_odds;
     }
 
     /**
@@ -49,7 +49,7 @@ class FixedOddsDistribution extends AbstractDistribution
             throw new \UnexpectedValueException("Odds expected to be between 0.00 and 0.999");
         }
 
-        $this->odds = (float) $odds;
+        $this->_odds = (float) $odds;
         return $this;
     }
 } 
