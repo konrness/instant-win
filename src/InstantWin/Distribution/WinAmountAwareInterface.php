@@ -3,7 +3,8 @@
 namespace InstantWin\Distribution;
 
 
-interface WinAmountAwareInterface {
+interface WinAmountAwareInterface
+{
     /**
      * @param int $currentWinCount
      */
@@ -18,5 +19,4 @@ interface WinAmountAwareInterface {
      * @param int $maxWinCount
      */
     public function setMaxWinCount($maxWinCount);
-
-} 
+}

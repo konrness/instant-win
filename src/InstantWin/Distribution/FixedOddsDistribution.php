@@ -52,4 +52,4 @@ class FixedOddsDistribution extends AbstractDistribution
         $this->_odds = (float) $odds;
         return $this;
     }
-} 
+}

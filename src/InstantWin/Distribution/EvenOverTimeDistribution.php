@@ -11,8 +11,9 @@ namespace InstantWin\Distribution;
 
 use InstantWin\TimePeriod;
 
-class EvenOverTimeDistribution extends AbstractDistribution
-    implements TimePeriodAwareInterface, WinAmountAwareInterface
+class EvenOverTimeDistribution extends AbstractDistribution implements
+    TimePeriodAwareInterface,
+    WinAmountAwareInterface
 {
     const MIN_ODDS = 0.00001;
 
@@ -135,7 +136,4 @@ class EvenOverTimeDistribution extends AbstractDistribution
         }
         return $this->playCount;
     }
-
-
-
-} 
+}

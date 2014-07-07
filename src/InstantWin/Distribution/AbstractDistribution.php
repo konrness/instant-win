@@ -7,7 +7,8 @@ namespace InstantWin\Distribution;
  *
  * @author Konr Ness <konrness@gmail.com>
  */
-abstract class AbstractDistribution {
+abstract class AbstractDistribution
+{
 
     /**
      * Get the odds for a single play at this moment in time
@@ -15,5 +16,4 @@ abstract class AbstractDistribution {
      * @return float Number from 0.000 to 0.999
      */
     abstract public function getOdds();
-
 }

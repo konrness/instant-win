@@ -3,7 +3,8 @@
 namespace InstantWin;
 
 
-class TimePeriod {
+class TimePeriod
+{
 
     /**
      * Timestamp of the beginning of the current time period
@@ -108,5 +109,4 @@ class TimePeriod {
     {
         return $this->getEndTimestamp() - $this->getStartTimestamp();
     }
-
-} 
+}

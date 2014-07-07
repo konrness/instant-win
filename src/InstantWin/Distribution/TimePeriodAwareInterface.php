@@ -10,10 +10,11 @@ namespace InstantWin\Distribution;
 
 use InstantWin\TimePeriod;
 
-interface TimePeriodAwareInterface {
+interface TimePeriodAwareInterface
+{
     /**
      * @param TimePeriod $timePeriod
      * @return mixed
      */
     public function setTimePeriod($timePeriod);
-} 
+}

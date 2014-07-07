@@ -12,7 +12,8 @@ use InstantWin\TimePeriod;
  *
  * @author Konr Ness <konrness@gmail.com>
  */
-class Player {
+class Player
+{
 
     /**
      * @var AbstractDistribution
@@ -196,7 +197,6 @@ class Player {
      */
     private function generateRandomFloat()
     {
-        return mt_rand(0,1000000) / 1000000;
+        return mt_rand(0, 1000000) / 1000000;
     }
-
-} 
+}
