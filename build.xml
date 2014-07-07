@@ -96,7 +96,7 @@
     <!-- Mess detector -->
     <target name="check:md">
         <echo msg="Generating code metrics ..."/>
-        <phpmd rulesets="codesize,unusedcode">
+        <phpmd rulesets="codesize,design,naming,unusedcode">
             <fileset refid="sourcecode"/>
             <formatter type="xml" outfile="${dir.reports}/pmd.xml"/>
         </phpmd>
