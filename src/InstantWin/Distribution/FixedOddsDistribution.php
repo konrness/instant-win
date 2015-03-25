@@ -1,14 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kness
- * Date: 3/20/14
- * Time: 9:58 AM
- */
 
 namespace InstantWin\Distribution;
 
-
+/**
+ * Defines distribution logic for awarding wins by using fixed odds. This will not attempt
+ * to spread the wins evenly over a time period.
+ *
+ * @author Konr Ness <konrness@gmail.com>
+ */
 class FixedOddsDistribution extends AbstractDistribution
 {
 

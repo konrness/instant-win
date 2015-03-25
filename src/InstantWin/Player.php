@@ -5,7 +5,6 @@ namespace InstantWin;
 use InstantWin\Distribution\AbstractDistribution;
 use InstantWin\Distribution\TimePeriodAwareInterface;
 use InstantWin\Distribution\WinAmountAwareInterface;
-use InstantWin\TimePeriod;
 
 /**
  * Allows for executing a play on an instant-win game
@@ -75,9 +74,7 @@ class Player
         }
 
         $odds = $this->getDistribution()->getOdds();
-
-//        echo "O: . $odds";
-
+        
         return $this->generateRandomFloat() <= $odds;
     }
 
@@ -92,6 +89,7 @@ class Player
     }
 
     /**
+     * @throws \Exception
      * @return \InstantWin\Distribution\AbstractDistribution
      */
     public function getDistribution()
@@ -135,6 +133,7 @@ class Player
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getCurWins()
@@ -156,6 +155,7 @@ class Player
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getMaxWins()
@@ -177,12 +177,13 @@ class Player
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getPlayCount()
     {
         if (null === $this->playCount) {
-            throw new Exception("PlayCount not set");
+            throw new \Exception("PlayCount not set");
         }
         return $this->playCount;
     }

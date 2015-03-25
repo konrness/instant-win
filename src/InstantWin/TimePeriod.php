@@ -47,6 +47,7 @@ class TimePeriod
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getEndTimestamp()
@@ -68,6 +69,7 @@ class TimePeriod
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getStartTimestamp()

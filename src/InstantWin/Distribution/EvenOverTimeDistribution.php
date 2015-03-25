@@ -1,16 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kness
- * Date: 3/20/14
- * Time: 11:59 AM
- */
 
 namespace InstantWin\Distribution;
 
-
 use InstantWin\TimePeriod;
 
+/**
+ * Defines distribution logic for spreading wins evenly over a time period when
+ * the number of total plays in the time period can not be known.
+ *
+ * @author Konr Ness <konrness@gmail.com>
+ */
 class EvenOverTimeDistribution extends AbstractDistribution implements
     TimePeriodAwareInterface,
     WinAmountAwareInterface
@@ -68,6 +67,7 @@ class EvenOverTimeDistribution extends AbstractDistribution implements
     }
 
     /**
+     * @throws \Exception
      * @return \InstantWin\TimePeriod
      */
     public function getTimePeriod()
@@ -95,6 +95,7 @@ class EvenOverTimeDistribution extends AbstractDistribution implements
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getCurrentWinCount()
@@ -106,6 +107,7 @@ class EvenOverTimeDistribution extends AbstractDistribution implements
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getMaxWinCount()
@@ -127,6 +129,7 @@ class EvenOverTimeDistribution extends AbstractDistribution implements
     }
 
     /**
+     * @throws \Exception
      * @return int
      */
     public function getPlayCount()

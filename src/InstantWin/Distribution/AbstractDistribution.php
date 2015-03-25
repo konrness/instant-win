@@ -2,11 +2,6 @@
 
 namespace InstantWin\Distribution;
 
-/**
- * Defines standard functionality for spreading wins over a time period
- *
- * @author Konr Ness <konrness@gmail.com>
- */
 abstract class AbstractDistribution
 {
 
